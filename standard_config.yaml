@@ -1,0 +1,58 @@
+#mandatory below
+training: True
+environment :
+  type : #classic or atari
+  name :
+#not mandatory
+replay_buffer :
+  memory_size : #1e6
+  path : # "./replay_memory/memory1.npy"
+  restore : #False
+#mandatory :
+agent :
+  type :
+  gamma :
+  learning_rate :
+  #if agent is dnn type then,
+  conv_layers :
+  fc_layers :
+  weights :
+  activations :
+  strides :
+  paddings :
+  filters :
+  #following are depend upon type defined
+  #but wrting all here
+  #if double_dqn
+  name : #DQNetwork
+  max_tau : #500
+
+  #if you want to update the model after achieving terminal state then
+#  max_tau : on_terminal_state
+  batch_train : #whole
+
+#not mandatory
+batch_size : #64
+pretrain_length : #batch_size
+pretrain_init : #random
+#if init with agent
+#pretrain_init : agent
+explore_start : #1.0
+explore_stop : #0.01
+decay_rate : #0.00001
+max_steps : #None
+max_steps_each_episode : #None
+max_episodes : #None
+#if max_steps and max_episodes are not defined then, training terminates with "explore_probability > 0.01"
+#if both of max_steps and max_episodes defined, then max_episodes considered first
+memory_save : #None
+model_save : #None
+#so memory_save and model_save if not defined either of them will not be stored.
+episode_render :
+#if episode_render can be non-negative integer,
+#ex: if it is 1 then episode will be rendered each episode,
+#if it is 2 then epsiode will be rendered with every two episode
+#if it is 0 or negative then episode will not be rendered.
+avg_expected_reward :
+#avg_expected_reward achieved then training will be terminated
+avg_expected_reward_count :
