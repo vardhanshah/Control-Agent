@@ -49,11 +49,11 @@ class Agent:
         return np.argmax(Qs)
 
     def train(self, states_mb,actions_mb,rewards_mb,next_states_mb,dones_mb, done=False):
-
+        batch_size = len(states_mb)
         qs_next_target = self.sess.run(self.target_net.output, feed_dict={self.target_net.states_: next_states_mb})
         target_qs_mb = self.sess.run(self.net.output, feed_dict={self.net.states_: states_mb})
 
-        for i in range(len(target_qs_mb)):
+        for i in range(batch_size):
             if dones_mb[i]:
                 target_qs_mb[i, actions_mb[i]] = rewards_mb[i]
             else:
@@ -61,13 +61,13 @@ class Agent:
         loss = 0
 
         if not self.batch_train:
-            for i in range(len(batch)):
+            for i in range(batch_size):
                 ind_loss, _ = self.sess.run([self.net.loss, self.net.optimizer],
                                             feed_dict={self.net.states_: states_mb[i].reshape([1, *states_mb[i].shape]),
                                                        self.net.target_Qs: target_qs_mb[i].reshape(
                                                            [1, *target_qs_mb[i].shape])})
                 loss += ind_loss
-            loss /= len(batch)
+            loss /= batch_size
         else:
             loss, _ = self.sess.run([self.net.loss, self.net.optimizer],
                                     feed_dict={self.net.states_: states_mb,

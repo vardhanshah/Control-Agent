@@ -5,7 +5,7 @@ environment :
 memory_size : 10000
 
 agent :
-  type : target_dqn 
+  type : double_dqn
   gamma : 0.99
   learning_rate : 0.0001
   conv_layers : 0
@@ -25,9 +25,8 @@ decay_rate : 0.9
 #max_steps : 500000
 #max__steps_each_episode :
 max_episodes : 200000
-memory_save : 1000
 batch_size : 64
-model_save : 1000
+model_save : 100
 training : True
 avg_expected_reward : 190
 pretrain_length : 64

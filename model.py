@@ -23,14 +23,14 @@ class model:
         self.scaled = 1.0
         if self.env_type=="atari":
             self.scaled = 255.0
-
-        if config["agent"]["type"] == "dqn":
+        self.agent_type = config["agent"]["type"]
+        if self.agent_type == "dqn":
             global Agent
             from dqn import Agent
-        elif config["agent"]["type"] == "double_dqn":
+        elif self.agent_type == "double_dqn":
             global Agent
             from double_dqn import Agent
-        elif config["agent"]["type"] == "target_dqn":
+        elif self.agent_type == "target_dqn":
             global Agent
             from target_dqn import Agent
 
@@ -46,14 +46,14 @@ class model:
         self.episodes = 0
         self.model_saving_counter = config.get("model_save",None)
         self.episode_render = config.get("episode_render",1)
-        self.last_checkpoint = self.join(os.getcwd(),"checkpoints","{}".format(self.env_name))
+        self.last_checkpoint = self.join(os.getcwd(),"checkpoints","{}_{}".format(self.env_name,self.agent_type))
         os.makedirs(self.last_checkpoint,exist_ok=True)
         self.last_checkpoint = self.join(self.last_checkpoint,'last_checkpoint.txt')
         self.avg_expected_reward = config.get("avg_expected_reward",None)
         self.avg_expected_reward_count = config.get("avg_expected_reward_count",100)
         self.max_saves = 3
 
-        self.model_path = self.join(os.getcwd(),'rl_models','{}'.format(self.env_name))
+        self.model_path = self.join(os.getcwd(),'rl_models','{}_{}'.format(self.env_name,self.agent_type))
         self.model_name = lambda x: "model{}.ckpt".format(x)
         os.makedirs(self.model_path,exist_ok=True)
 
@@ -69,10 +69,10 @@ class model:
 
         self.reward_list = []
         self.loss_list = []
-        self.reward_path = self.join(os.getcwd(),'rewards',self.env_name)
+        self.reward_path = self.join(os.getcwd(),'rewards','{}_{}'.format(self.env_name,self.agent_type))
         os.makedirs(self.reward_path,exist_ok=True)
         self.reward_file = self.join(self.reward_path,'rewards.npy')
-        self.loss_path = self.join(os.getcwd(),'losses',self.env_name)
+        self.loss_path = self.join(os.getcwd(),'losses','{}_{}'.format(self.env_name,self.agent_type))
         os.makedirs(self.loss_path,exist_ok=True)
         self.loss_file = self.join(self.loss_path,'losses.npy')
 

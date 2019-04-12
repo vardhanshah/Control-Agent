@@ -29,6 +29,6 @@ explore_start : 1.0
 explore_stop : 0.1
 decay_rate : 0.000001
 max_steps : 5000000
-model_save : 1000
+model_save : 100
 episode_render : 1
 training: True
