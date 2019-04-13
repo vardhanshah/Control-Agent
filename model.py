@@ -81,11 +81,8 @@ class model:
         self.last_k_rewards = 0
 
     def join(self,*args):
-        # print(args)
         if len(args) == 1:
-            # print(type(args[0]))
             return args[0]
-        # print(args)
         return os.path.join(args[0],self.join(*args[1:]))
 
     def replay_add(self,action,frame, reward,done):
@@ -158,7 +155,6 @@ class model:
                 self.env.render()
             current_step += 1
             self.increase_step()
-            # print("s tep: {} action {}".format(self.steps,action))
             self.replay_add(action,next_frame,reward,done_replay)
             episode_rewards += reward
             states_mb, actions_mb, rewards_mb, next_states_mb, dones_mb = self.replay_buffer.sample()
@@ -168,13 +164,11 @@ class model:
 
                 next_states_mb = next_states_mb/self.scaled #new_states scaling
 
-            # print("batch processing start \n---")
             if current_step%self.training_frequency == 0:
                 loss += self.agent.train(states_mb,actions_mb,rewards_mb,next_states_mb,dones_mb,done)
             if done:
                 self.env.close()
                 break
-            # print("batch processing end \n---")
         if render:
             self.env.close()
         return episode_rewards,loss/max(current_step//4,1)
@@ -236,7 +230,6 @@ class model:
         try:
             with open(self.last_checkpoint,"r") as f:
                 model = f.readline()
-                print(model)
                 f.close()
             return model
         except:

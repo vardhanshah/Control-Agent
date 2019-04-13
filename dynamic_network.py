@@ -80,9 +80,7 @@ class network:
                 name='output'
             )(x)
 
-            # self.Q = tf.reduce_sum(tf.multiply(self.output,self.actions_))
             self.loss = tf.losses.mean_squared_error(self.output, self.target_Qs)
-            # self.loss = tf.reduce_mean(tf.square(self.target_Qs-self.output))
             opt_nm = config.get("optimizer", "rmsprop")
             if opt_nm == "adam":
                 self.optimizer = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss)

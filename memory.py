@@ -75,9 +75,3 @@ class memory:
             self.new_states[i] = self._get_state(self.indices[i])
         return self.states,self.actions[self.indices],self.rewards[self.indices],self.new_states,self.dones[self.indices]
 
-    def plot_frames(self):
-        import matplotlib.pyplot as plt
-        for i in range(555,570):
-            # print(self.frames[i])
-            plt.imshow(self.frames[i],cmap="gray")
-            plt.show()
