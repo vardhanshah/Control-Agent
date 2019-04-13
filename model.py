@@ -1,4 +1,3 @@
-from preprocess import preprocess
 from memory import memory as mem
 import random
 import numpy as np
