@@ -19,15 +19,14 @@ agent :
   batch_train : individual
   max_tau : on_terminal_state
 
-explore_start : 1
-explore_stop : 0.001
+explore_start : 0.1
+explore_stop : 0.1
 decay_rate : 0.9
 #max_steps : 500000
 #max__steps_each_episode :
 max_episodes : 200000
 batch_size : 64
 model_save : 100
-training : True
 avg_expected_reward : 190
 pretrain_length : 64
 episode_render : 0

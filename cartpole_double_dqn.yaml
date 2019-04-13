@@ -30,4 +30,4 @@ model_save : 100
 training : True
 avg_expected_reward : 190
 pretrain_length : 64
-episode_render : 1000
+episode_render : 0

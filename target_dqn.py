@@ -49,6 +49,8 @@ class Agent:
         return np.argmax(Qs)
 
     def train(self, states_mb,actions_mb,rewards_mb,next_states_mb,dones_mb, done=False):
+
+
         batch_size = len(states_mb)
         qs_next_target = self.sess.run(self.target_net.output, feed_dict={self.target_net.states_: next_states_mb})
         target_qs_mb = self.sess.run(self.net.output, feed_dict={self.net.states_: states_mb})

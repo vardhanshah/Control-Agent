@@ -10,7 +10,7 @@ default_paddings = ['valid', 'valid']
 
 from keras.layers import Input, Conv2D, Dense, Flatten
 import keras.backend as K
-
+from keras.initializers import VarianceScaling
 
 class network:
 
@@ -61,6 +61,7 @@ class network:
                            padding=self.paddings[i],
                            data_format="channels_first",
                            activation=self.conv_activations[i],
+                           kernel_initializer=tf.variance_scaling_initializer(scale=2),
                            name=name_format("conv", i)
                            )(x)
 
@@ -69,6 +70,7 @@ class network:
             for i in range(0, self.fc_layers):
                 x = Dense(units=self.units[i],
                           activation=self.fc_activations[i],
+                          kernel_initializer=tf.variance_scaling_initializer(scale=2),
                           name=name_format("fc", i)
                           )(x)
 

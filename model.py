@@ -19,6 +19,7 @@ class model:
         self.frame_shape = self.env.frame_shape
         self.stack_size = self.env.stack_size
         self.env_type = self.env.type
+        self.env_dtype = self.env.dtype
         self.scaled = 1.0
         if self.env_type=="atari":
             self.scaled = 255.0
@@ -61,7 +62,9 @@ class model:
         self.batch_size = config.get("batch_size",64)
         self.pretrain_length = config.get("pretrain_length",self.batch_size)
         self.pretrain_init = config.get("pretrain_init","random") == "random"
-        self.replay_buffer = mem(config.get("memory_size",1e6),self.batch_size,self.frame_shape,self.stack_size,self.state_shape)
+
+        self.replay_buffer = mem(config.get("memory_size",1e6),self.batch_size,self.frame_shape,self.stack_size,self.state_shape,self.env_dtype)
+
         self.memory_initialization()
 
         # ------------------replay_buffer_end----------------------
@@ -154,21 +157,24 @@ class model:
                 self.env.render()
             current_step += 1
             self.increase_step()
-            # print("step: {} action {}".format(self.steps,action))
+            # print("s tep: {} action {}".format(self.steps,action))
             self.replay_add(action,next_frame,reward,done_replay)
             episode_rewards += reward
             states_mb, actions_mb, rewards_mb, next_states_mb, dones_mb = self.replay_buffer.sample()
 
-            states_mb /= self.scaled #states scaling
+            if self.scaled > 1.0:
+                states_mb = states_mb/self.scaled #states scaling
 
-            next_states_mb /= self.scaled #new_states scaling
+                next_states_mb = next_states_mb/self.scaled #new_states scaling
 
             # print("batch processing start \n---")
             loss += self.agent.train(states_mb,actions_mb,rewards_mb,next_states_mb,dones_mb,done)
             if done:
+                self.env.close()
                 break
             # print("batch processing end \n---")
-
+        if render:
+            self.env.close()
         return episode_rewards,loss/max(current_step,1)
 
     def save_reward(self):
@@ -209,7 +215,7 @@ class model:
                 self.save_model()
                 self.save_reward()
                 self.save_loss()
-
+                print(self.replay_buffer.occupied_memory() )
             if self.avg_expected_reward is not None and avg_reward >= self.avg_expected_reward:
                 print("Average Reward: {} Average Expected Reward : {}".format(avg_reward,self.avg_expected_reward))
                 print("Average Expected Reward Found !\nEnding the training")
@@ -218,7 +224,12 @@ class model:
         self.save_model()
         self.save_reward()
         self.save_loss()
-
+        try:
+            import matplotlib.pyplot as plt
+            self.plot_losses(plt)
+            self.plot_rewards(plt)
+        except:
+            pass
     def last_checkpoint_path(self):
         with open(self.last_checkpoint,"r") as f:
             model = f.readline()
@@ -237,19 +248,21 @@ class model:
         render_array = []
         for episode in range(1,total_episodes+1):
             tmp_render = []
-            tmp_render.append(self.env.reset())
+            self.env.reset()
+            tmp_render.append(self.env.render("rgb_array"))
             episode_reward = 0
             done = False
             while not done:
-                # action = self.predict_action(state)
-                action = self.agent.evaluate(self.env.state)
+                action = self.predict_action(self.env.state)
+                # action = self.agent.evaluate(self.env.state)
                 next_frame, reward, done, _ = self.env.step(action)
-                if render:
-                    self.env.render()
-                tmp_render.append(next_frame)
+                # if render:
+                    # self.env.render()
+                tmp_render.append(self.env.render("rgb_array"))
                 episode_reward += reward
                 # print(episode_reward,action)
             print("Episode: {} Score: {}".format(episode,episode_reward))
+            self.env.close()
             if highest_reward < episode_reward:
                 highest_reward = episode_reward
                 render_array[:] = tmp_render[:]
@@ -259,13 +272,13 @@ class model:
         print("Avg Reward: {}".format(avg_reward))
         return avg_reward,highest_reward,render_array
 
-    def evaluate(self,total_episodes=3,render=True,model=None,for_all=False):
+    def evaluate(self,total_episodes=3,render=True,model=None,for_all=False,plot=False):
         models = []
         if model:
             models.append(model)
         elif for_all:
             for i in range(1,self.max_saves+1):
-                model = self.model_path+self.model_name(i)
+                model = self.join(self.model_path,self.model_name(i))
                 models.append(model)
         else :
             models.append(self.last_checkpoint_path())
@@ -275,16 +288,21 @@ class model:
                 print("can't restore the model {}".format(model))
                 continue
             avg_reward, highest_reward, render_array = self.run(total_episodes,render)
-            _, save_gif = os.path.split(model)
-            save_gif = os.getcwd() + '/gifs/' + save_gif
+            front, save_gif = os.path.split(model)
+            _,game_name = os.path.split(front)
+            save_gif = self.join(os.getcwd(),'gifs',game_name,save_gif)
             os.makedirs(save_gif,exist_ok=True)
-            with imageio.get_writer(save_gif+'/best.mp4',fps=20) as writer:
+            with imageio.get_writer(self.join(save_gif,'best.gif'),fps=50) as writer:
                 for render in render_array:
                     writer.append_data(render)
             #  imageio.mimwrite(save_gif + '/per.gif',render_array)
-            import matplotlib.pyplot as plt
-        self.plot_losses(plt,load=True)
-        self.plot_rewards(plt,load=True)
+        if plot:
+            try:
+                import matplotlib.pyplot as plt
+                self.plot_losses(plt,load=True)
+                self.plot_rewards(plt,load=True)
+            except:
+                pass
 
     def plot_losses(self,plt,load=False):
         if load:
@@ -293,11 +311,15 @@ class model:
         plt.xlabel("Episodes")
         plt.ylabel("Losses")
         plt.savefig(self.join(self.loss_path,"loss.png"))
-        try:
-            plt.show()
-        except:
-            pass
+        saved_plot = self.join(self.reward_path,"losses.png")
+        plt.savefig(saved_plot)
+        print("losses plot saved at {}".format(saved_plot))
+        # try:
+        #     # plt.show()
+        # except:
+        #     pass
         plt.clf()
+
     def plot_rewards(self,plt,load=False):
         if load:
             self.reward_list = np.load(self.reward_file)
@@ -322,9 +344,15 @@ class model:
         plt.legend(loc="lower right")
         plt.xlabel("Episodes")
         plt.ylabel("Rewards")
-        plt.savefig(self.join(self.reward_path,"rewards.png"))
-        try:
-            plt.show()
-        except:
-            pass
+        saved_plot = self.join(self.reward_path,"rewards.png")
+        plt.savefig(saved_plot)
+        print("rewards plot saved at {}".format(saved_plot))
+        # try:
+        #     # plt.show()
+        # except:
+        #     pass
         plt.clf()
+
+    def plot_frame(self,frame):
+        import matplotlib.pyplot as plt
+        plt.imshow(frame,cmap="")
