@@ -1,7 +1,7 @@
 #mandatory below
-environment : 
+environment :
   type: atari
-  name : SpaceInvaders-v0
+  name : Enduro-v0
   frame_shape: [84,84]
   stack_size : 4
 

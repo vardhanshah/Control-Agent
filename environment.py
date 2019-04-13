@@ -5,7 +5,6 @@ import numpy as np
 import gym
 
 
-
 class AtariEnvironment:
 
     def __init__(self,config):
@@ -53,7 +52,16 @@ class AtariEnvironment:
 
     def preprocess_frame(self,frame):
         if self.type == "atari":
-            return transform.resize(rgb2gray(frame),self.frame_shape)
+            gray = rgb2gray(frame)
+            if self.name == "SpaceInvaders-v0" or self.name == "Seaquest-v0":
+                cropped = gray[10:-15,:-15]
+            elif self.name == "Enduro-v0":
+                cropped = gray[40:-55,20:]
+            elif self.name == "Pong-v0":
+                cropped = gray[35:-15,:]
+            else:
+                cropped = gray
+            return np.array(transform.resize(cropped,self.frame_shape)*255.0,dtype=np.uint8)
         return frame
 
     def preprocess_state(self, frame, is_new_episode=False):

@@ -52,7 +52,7 @@ class model:
         self.avg_expected_reward = config.get("avg_expected_reward",None)
         self.avg_expected_reward_count = config.get("avg_expected_reward_count",100)
         self.max_saves = 3
-
+        self.training_frequency = config.get("training_frequency",4)
         self.model_path = self.join(os.getcwd(),'rl_models','{}_{}'.format(self.env_name,self.agent_type))
         self.model_name = lambda x: "model{}.ckpt".format(x)
         os.makedirs(self.model_path,exist_ok=True)
@@ -107,6 +107,7 @@ class model:
                 self.env.reset()
 
         print("ending pretraining")
+
     def predict_action(self,state):
         epsilon = np.random.rand()
         if self.explore_probability > epsilon:
@@ -117,8 +118,8 @@ class model:
 
     def increase_step(self):
         self.steps += 1
-        self.explore_probability = max(self.explore_stop,self.explore_probability-4*self.decay_rate)
-        #self.explore_probability =  self.explore_stop + (self.explore_start-self.explore_stop)*np.exp(-self.steps*self.decay_rate)
+        self.explore_probability = max(self.explore_stop,self.explore_probability-self.decay_rate)
+        # self.explore_probability =  self.explore_stop + (self.explore_start-self.explore_stop)*np.exp(-self.steps*self.decay_rate)
 
     def episode_check(self):
         if self.max_episodes:
@@ -168,14 +169,15 @@ class model:
                 next_states_mb = next_states_mb/self.scaled #new_states scaling
 
             # print("batch processing start \n---")
-            loss += self.agent.train(states_mb,actions_mb,rewards_mb,next_states_mb,dones_mb,done)
+            if current_step%self.training_frequency == 0:
+                loss += self.agent.train(states_mb,actions_mb,rewards_mb,next_states_mb,dones_mb,done)
             if done:
                 self.env.close()
                 break
             # print("batch processing end \n---")
         if render:
             self.env.close()
-        return episode_rewards,loss/max(current_step,1)
+        return episode_rewards,loss/max(current_step//4,1)
 
     def save_reward(self):
         np.save(self.reward_file,self.reward_list)
@@ -231,12 +233,14 @@ class model:
         except:
             pass
     def last_checkpoint_path(self):
-        with open(self.last_checkpoint,"r") as f:
-            model = f.readline()
-            print(model)
-            f.close()
-        return model
-
+        try:
+            with open(self.last_checkpoint,"r") as f:
+                model = f.readline()
+                print(model)
+                f.close()
+            return model
+        except:
+            return None
     def restore_agent(self,model=None):
         if not model:
             model = self.last_checkpoint_path()
@@ -310,8 +314,7 @@ class model:
         plt.plot(self.loss_list,color="blue")
         plt.xlabel("Episodes")
         plt.ylabel("Losses")
-        plt.savefig(self.join(self.loss_path,"loss.png"))
-        saved_plot = self.join(self.reward_path,"losses.png")
+        saved_plot = self.join(self.loss_path,"losses.png")
         plt.savefig(saved_plot)
         print("losses plot saved at {}".format(saved_plot))
         # try:
@@ -353,6 +356,3 @@ class model:
         #     pass
         plt.clf()
 
-    def plot_frame(self,frame):
-        import matplotlib.pyplot as plt
-        plt.imshow(frame,cmap="")
