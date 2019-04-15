@@ -1,4 +1,4 @@
-from memory import memory as mem
+from lib.memory import memory as mem
 import random
 import numpy as np
 import os
@@ -10,7 +10,7 @@ class model:
 
         # if config["environment"]["type"] == "atari":
         global Environment
-        from environment import AtariEnvironment as Environment
+        from lib.environment import AtariEnvironment as Environment
 
         self.env = Environment(config["environment"])
         self.env_name = config["environment"]["name"]
@@ -26,13 +26,13 @@ class model:
         self.agent_type = config["agent"]["type"]
         if self.agent_type == "dqn":
             global Agent
-            from dqn import Agent
+            from lib.dqn import Agent
         elif self.agent_type == "double_dqn":
             global Agent
-            from double_dqn import Agent
+            from lib.double_dqn import Agent
         elif self.agent_type == "target_dqn":
             global Agent
-            from target_dqn import Agent
+            from lib.target_dqn import Agent
 
         self.agent = Agent(self.state_shape,self.no_actions,config["agent"])
         self.explore_start = config.get("explore_start",1.0)
@@ -59,13 +59,14 @@ class model:
 
         # ------------------replay_buffer_start--------------------
 
-        self.batch_size = config.get("batch_size",64)
-        self.pretrain_length = config.get("pretrain_length",self.batch_size)
-        self.pretrain_init = config.get("pretrain_init","random") == "random"
+        if config["training"]:
+            self.batch_size = config.get("batch_size",64)
+            self.pretrain_length = config.get("pretrain_length",self.batch_size)
+            self.pretrain_init = config.get("pretrain_init","random") == "random"
 
-        self.replay_buffer = mem(config.get("memory_size",1e6),self.batch_size,self.frame_shape,self.stack_size,self.state_shape,self.env_dtype)
+            self.replay_buffer = mem(config.get("memory_size",1e6),self.batch_size,self.frame_shape,self.stack_size,self.state_shape,self.env_dtype)
 
-        self.memory_initialization()
+            self.memory_initialization()
 
         # ------------------replay_buffer_end----------------------
 
@@ -211,7 +212,7 @@ class model:
                 self.save_model()
                 self.save_reward()
                 self.save_loss()
-                print(self.replay_buffer.occupied_memory() )
+                print(self.replay_buffer.occupied_memory())
             if self.avg_expected_reward is not None and avg_reward >= self.avg_expected_reward:
                 print("Average Reward: {} Average Expected Reward : {}".format(avg_reward,self.avg_expected_reward))
                 print("Average Expected Reward Found !\nEnding the training")
@@ -239,7 +240,7 @@ class model:
             model = self.last_checkpoint_path()
         return self.agent.restore(model)
 
-    def run(self,total_episodes,render=True):
+    def run(self,total_episodes,render):
         highest_reward = -1e18
         avg_reward = 0
         render_array = []
@@ -250,11 +251,12 @@ class model:
             episode_reward = 0
             done = False
             while not done:
+
                 action = self.predict_action(self.env.state)
                 # action = self.agent.evaluate(self.env.state)
                 next_frame, reward, done, _ = self.env.step(action)
-                # if render:
-                    # self.env.render()
+                if render:
+                    self.env.render()
                 tmp_render.append(self.env.render("rgb_array"))
                 episode_reward += reward
                 # print(episode_reward,action)
@@ -290,8 +292,8 @@ class model:
             save_gif = self.join(os.getcwd(),'gifs',game_name,save_gif)
             os.makedirs(save_gif,exist_ok=True)
             with imageio.get_writer(self.join(save_gif,'best.gif'),fps=50) as writer:
-                for render in render_array:
-                    writer.append_data(render)
+                for r in render_array:
+                    writer.append_data(r)
             #  imageio.mimwrite(save_gif + '/per.gif',render_array)
         if plot:
             try:
@@ -307,13 +309,13 @@ class model:
         plt.plot(self.loss_list,color="blue")
         plt.xlabel("Episodes")
         plt.ylabel("Losses")
-        saved_plot = self.join(self.loss_path,"losses.png")
+        saved_plot = self.join(self.loss_path,"losses.pdf")
         plt.savefig(saved_plot)
         print("losses plot saved at {}".format(saved_plot))
-        # try:
-        #     # plt.show()
-        # except:
-        #     pass
+        try:
+            plt.show()
+        except:
+            pass
         plt.clf()
 
     def plot_rewards(self,plt,load=False):
@@ -337,15 +339,15 @@ class model:
         plt.plot(self.reward_list,label="rewards",color="blue")
         plt.plot(last_10_list,label="mean reward(last 10)",color="orange")
         plt.plot(last_100_list,label="mean rewards(last 100)",color="black")
-        plt.legend(loc="lower right")
+        plt.legend(loc="upper left")
         plt.xlabel("Episodes")
         plt.ylabel("Rewards")
-        saved_plot = self.join(self.reward_path,"rewards.png")
+        saved_plot = self.join(self.reward_path,"rewards.pdf")
         plt.savefig(saved_plot)
         print("rewards plot saved at {}".format(saved_plot))
-        # try:
-        #     # plt.show()
-        # except:
-        #     pass
+        try:
+            plt.show()
+        except:
+            pass
         plt.clf()
 

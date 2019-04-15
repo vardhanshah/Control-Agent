@@ -1,4 +1,4 @@
-from model import model
+from lib.model import model
 import gym,sys
 from yaml import load
 try:

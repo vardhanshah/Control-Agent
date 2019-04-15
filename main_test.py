@@ -1,4 +1,4 @@
-from model import model
+from lib.model import model
 import gym,sys
 from yaml import load
 try:
@@ -18,5 +18,5 @@ if __name__ == '__main__':
         print("please specify environment")
         sys.exit(0)
     m = model(config)
-    m.evaluate(total_episodes=3,render=True,plot=True,for_all=True)
+    m.evaluate(total_episodes=1,render=True,plot=True,for_all=True)
 

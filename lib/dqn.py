@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import os, sys
-from dynamic_network import network
+from lib.dynamic_network import network
 
 
 class Agent:
