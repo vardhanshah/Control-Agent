@@ -1,0 +1,27 @@
+agent:
+  activations: [relu, relu]
+  batch_train: whole
+  conv_layers: 0
+  fc_layers: 2
+  filters: []
+  gamma: 0.99
+  learning_rate: 9.0e-05
+  max_tau: on_terminal_state
+  optimizer: adam
+  paddings: []
+  strides: []
+  type: dqn
+  weights: [256, 256]
+avg_expected_reward: -110
+batch_size: 64
+decay_rate: 0.9
+environment: {name: MountainCar-v0, type: classic}
+episode_render: 0
+explore_start: 1
+explore_stop: 0.001
+max_steps: 5000000
+memory_size: 1000
+model_save: 1000
+pretrain_length: 64
+training: true
+training_frequency: 1

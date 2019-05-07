@@ -1,0 +1,37 @@
+#mandatory below
+environment : 
+  type: atari
+  name : SpaceInvaders-v0
+  frame_shape: [110,84]
+  stack_size : 4
+
+memory_size : 1000000
+#mandatory :
+agent :
+  type : target_dqn
+  gamma : 0.99
+  learning_rate : 0.00025
+  #if agent is dnn type then,
+  conv_layers : 3
+  fc_layers : 1
+  weights : [[8,8],[4,4],[3,3],512]
+  activations : [relu,relu,relu,relu]
+  strides : [[4,4],[2,2],[1,1]]
+  paddings : [valid,valid,valid]
+  filters : [32,64,64]
+  max_tau : 10000
+  epsilon : 0.01
+  optimizer : adam
+
+#not mandatory
+training_frequency: 1
+batch_size : 64
+pretrain_length: 50000
+explore_start : 1.0
+explore_stop : 0.1
+decay_rate : 0.0000009
+max_steps : 5000000
+model_save : 1000
+episode_render : 0
+training: True
+memory_save: 1000

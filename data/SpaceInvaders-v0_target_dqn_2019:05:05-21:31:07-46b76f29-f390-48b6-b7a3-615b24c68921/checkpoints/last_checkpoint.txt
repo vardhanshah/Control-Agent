@@ -1,0 +1,1 @@
+{explore_probability: 0.3574621000123629, model_name: model1.ckpt}

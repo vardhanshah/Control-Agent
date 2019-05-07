@@ -1,0 +1,3 @@
+model_checkpoint_path: "/home/hound/rl/data/CartPole-v0_target_dqn_2019:05:05-21:06:00-f90a5cef-8385-4fe7-8b32-0a70b89d154e/rl_models/model2.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/CartPole-v0_target_dqn_2019:05:05-21:06:00-f90a5cef-8385-4fe7-8b32-0a70b89d154e/rl_models/model1.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/CartPole-v0_target_dqn_2019:05:05-21:06:00-f90a5cef-8385-4fe7-8b32-0a70b89d154e/rl_models/model2.ckpt"

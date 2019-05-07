@@ -1,0 +1,4 @@
+model_checkpoint_path: "/home/hound/rl/data/Acrobot-v1_target_dqn_2019:05:05-21:10:07-ef2964c7-5964-4273-b57e-1f149d97ef9d/rl_models/model3.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/Acrobot-v1_target_dqn_2019:05:05-21:10:07-ef2964c7-5964-4273-b57e-1f149d97ef9d/rl_models/model1.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/Acrobot-v1_target_dqn_2019:05:05-21:10:07-ef2964c7-5964-4273-b57e-1f149d97ef9d/rl_models/model2.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/Acrobot-v1_target_dqn_2019:05:05-21:10:07-ef2964c7-5964-4273-b57e-1f149d97ef9d/rl_models/model3.ckpt"

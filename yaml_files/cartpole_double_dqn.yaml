@@ -2,7 +2,7 @@ environment :
   type: classic
   name: CartPole-v0
 
-memory_size : 10000
+memory_size : 1000
 
 agent :
   type : double_dqn
@@ -16,7 +16,6 @@ agent :
   paddings : []
   filters : []
   optimizer: adam
-  batch_train : individual
   max_tau : on_terminal_state
 
 explore_start : 1

@@ -1,0 +1,25 @@
+agent:
+  activations: [relu, relu]
+  conv_layers: 0
+  fc_layers: 2
+  filters: []
+  gamma: 0.99
+  learning_rate: 0.0001
+  max_tau: on_terminal_state
+  optimizer: adam
+  paddings: []
+  strides: []
+  type: target_dqn
+  weights: [256, 256]
+avg_expected_reward: 190
+batch_size: 64
+decay_rate: 0.9
+environment: {name: Acrobot-v1, type: classic}
+episode_render: 1000
+explore_start: 1
+explore_stop: 0.001
+max_episodes: 200000
+memory_size: 1000
+model_save: 100
+pretrain_length: 64
+training: true

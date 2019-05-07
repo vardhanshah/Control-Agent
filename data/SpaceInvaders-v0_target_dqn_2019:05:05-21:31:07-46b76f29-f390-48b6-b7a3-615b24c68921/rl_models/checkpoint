@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/hound/rl/data/SpaceInvaders-v0_target_dqn_2019:05:05-21:31:07-46b76f29-f390-48b6-b7a3-615b24c68921/rl_models/model1.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/SpaceInvaders-v0_target_dqn_2019:05:05-21:31:07-46b76f29-f390-48b6-b7a3-615b24c68921/rl_models/model1.ckpt"

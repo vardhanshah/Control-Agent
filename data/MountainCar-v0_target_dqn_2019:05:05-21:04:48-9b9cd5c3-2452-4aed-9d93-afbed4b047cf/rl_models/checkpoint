@@ -1,0 +1,4 @@
+model_checkpoint_path: "/home/hound/rl/data/MountainCar-v0_target_dqn_2019:05:05-21:04:48-9b9cd5c3-2452-4aed-9d93-afbed4b047cf/rl_models/model1.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/MountainCar-v0_target_dqn_2019:05:05-21:04:48-9b9cd5c3-2452-4aed-9d93-afbed4b047cf/rl_models/model2.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/MountainCar-v0_target_dqn_2019:05:05-21:04:48-9b9cd5c3-2452-4aed-9d93-afbed4b047cf/rl_models/model3.ckpt"
+all_model_checkpoint_paths: "/home/hound/rl/data/MountainCar-v0_target_dqn_2019:05:05-21:04:48-9b9cd5c3-2452-4aed-9d93-afbed4b047cf/rl_models/model1.ckpt"
