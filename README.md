@@ -1,5 +1,5 @@
 <img src="model_api_design.png">
-
+<pre>
 
 usage: main.py [-h] [--id ID] [-tr] [-ts] [-yf YAML_FILE]
                [--explore_start EXPLORE_START] [--explore_stop EXPLORE_STOP]
@@ -61,3 +61,5 @@ optional arguments:
   --restore_model       only to be used to restore model for training purpose
   --restore_memory      only to be used if saved memory during training, want
                         to restore that memory
+
+</pre>
