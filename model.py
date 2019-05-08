@@ -126,8 +126,8 @@ class model:
         self.explore_start = self.config.get("explore_start", 1)
         self.explore_stop = self.config.get("explore_stop", 0.1)
         self.decay_rate = self.config.get("decay_rate", 9e-7)
-
-        self.explore_probability = self.explore_start
+        if not restore_model:
+            self.explore_probability = self.explore_start
         self.memory_saving_counter = None
         if "memory_save" in self.config:
             os.makedirs(self.memory_path, exist_ok=True)
